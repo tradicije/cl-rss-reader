@@ -16,7 +16,7 @@ A Linux-first, local-first desktop RSS/Atom reader written primarily in Common L
 
 ## Status
 
-Planning. Application implementation has not started. Proposed technical decisions and project structure are in the [technical plan](docs/technical-plan.md).
+Early development. The ASDF system, feed/article model, and in-memory application operations are in place. Parsers, persistence, and GUI are not implemented yet. Proposed technical decisions and project structure are in the [technical plan](docs/technical-plan.md).
 
 ## Planned v0.1 scope
 
