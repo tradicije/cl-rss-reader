@@ -2,7 +2,7 @@
 
 This changelog follows Keep a Changelog. Releases will use Semantic Versioning once versioned releases begin.
 
-## Unreleased
+## [0.1.0-dev] - Unreleased
 
 ### Added
 
@@ -10,3 +10,4 @@ This changelog follows Keep a Changelog. Releases will use Semantic Versioning o
 - AGPL-3.0-or-later license and GitHub contribution and security guidance.
 - English as the language for all repository and application text.
 - Initial ASDF system, normalized feed/article structures, and in-memory application state operations.
+- Initial RSS 2.0 and Atom XML parsing into the normalized article model.

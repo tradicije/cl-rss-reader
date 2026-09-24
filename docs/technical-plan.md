@@ -1,6 +1,6 @@
 # Technical plan
 
-Status: proposal for the first milestone; no application implementation exists yet. Before coding, verify Quicklisp availability, Fedora system packages, and upstream changes for the chosen libraries.
+Status: active implementation. Before adding further dependencies, verify Quicklisp availability, Fedora system packages, and upstream changes for the chosen libraries.
 
 ## Recommendations
 
@@ -9,7 +9,8 @@ Status: proposal for the first milestone; no application implementation exists y
 | Lisp implementation | SBCL | Mature, fast, actively released, strong Linux support, and a capable interactive debugger. It has the broadest practical Common Lisp examples and deployment experience. | CCL is a possible alternative, but SBCL is the most practical starting point and deployment target. |
 | GUI | GTK 4 through `cl-gtk4` | GTK 4 is the current toolkit direction, supports Linux/Wayland, and is available as distro packages. The binding exposes GTK 4 and Libadwaita. The binding is much smaller and younger than GTK itself, so its maintenance and API coverage must be validated with a prototype. | `cl-cffi-gtk` is better documented and established, but targets GTK 3. GTK 3 remains available but is a weaker choice for a new Linux-first app. Qt/CommonQt/Qtools carry greater maintenance risk and offer a less direct path to contemporary Linux desktop integration. |
 | HTTP | Dexador | An idiomatic Common Lisp client with HTTPS, timeouts, redirects, and status handling. A synchronous request in a worker thread is enough initially. | Drakma is mature and well documented, but Dexador is a practical choice for a new client. |
-| XML | CXML, using its streaming Klacks interface | A mature, namespace-aware XML parser. Streaming avoids retaining the whole document as a DOM; parser code maps RSS and Atom into the same model without involving the GUI. | XMLS is smaller and easier to approach, but parses the whole document into memory and offers less detailed error reporting. |
+| XML | CXML, using the `cxml-klacks` ASDF system | A mature, namespace-aware XML parser. The current implementation builds a small in-memory representation of the XML document; a later streaming pass can retain just one entry at a time. DTD subsets are rejected to prevent external entity resolution. | XMLS is smaller and easier to approach, but parses the whole document into memory and offers less detailed error reporting. |
+| Feed dates | `cl-date-time-parser` | Parses RFC 822/RFC 2822 dates used by RSS and ISO 8601/RFC 3339 dates used by Atom into Common Lisp universal time. The API is small but brings several transitive dependencies. | Implementing date parsing ourselves would be easy to get wrong around time zones and format variants. |
 | SQLite | Start with a small prototype comparing `cl-dbi` plus its SQLite3 driver and a direct `cl-sqlite` binding | SQLite is embedded and needs no server. DBI provides a database-independent interface but adds dependencies; a direct binding is smaller and can make SQL easier to learn. Confirm prepared statements, transactions, Fedora packaging, and current upstream health before committing to one. | CLSQL is an older, broader framework. A hand-written CFFI binding is unnecessary for the first milestone. |
 | URL and browser | QURI plus UIOP or GIO | QURI handles URL parsing. Open article URLs through GIO/default application integration when the binding supports it; otherwise use `uiop:launch-program` with `xdg-open`. | Calling `xdg-open` directly is simple, though GIO gives a more direct desktop integration path. |
 | XDG paths | GLib/GIO where practical, otherwise a small POSIX helper or verified XDG library | Config under `$XDG_CONFIG_HOME`, database under `$XDG_DATA_HOME`, cache under `$XDG_CACHE_HOME`, with specification defaults. Never hardcode home paths or put user data beside the executable. | A small helper avoids another runtime dependency and is easy to teach. |
@@ -40,8 +41,7 @@ cl-rss-reader/
 │   ├── config/xdg.lisp
 │   ├── net/http.lisp
 │   ├── parser/xml-helpers.lisp
-│   ├── parser/rss.lisp
-│   ├── parser/atom.lisp
+│   ├── parser/feed.lisp
 │   ├── storage/sqlite.lisp
 │   ├── storage/schema.lisp
 │   ├── application/state.lisp
