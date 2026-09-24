@@ -1,0 +1,8 @@
+*.fasl
+*.core
+*.image
+/build/
+/dist/
+/data/
+/coverage/
+.DS_Store
